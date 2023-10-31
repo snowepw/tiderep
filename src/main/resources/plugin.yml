@@ -1,0 +1,23 @@
+name: TideReputation
+author: xdproston
+version: 1.0
+api-version: 1.19
+libraries: [net.kyori:adventure-text-minimessage:4.14.0]
+softdepend: [PlaceholderAPI]
+main: net.xdproston.tiderep.Main
+commands:
+  reputation:
+    aliases: [rep]
+    description: Main reputation command of TideReputation.
+    permission: tiderep.cmd.reputation
+  adminreputation:
+    aliases: [arep, adminrep, areputation]
+    description: Admin reputation command of TideReputation.
+    permission: tiderep.cmd.adminreputation
+permissions:
+  tiderep.cmd.reputation:
+    description: Permission for cmd reputation
+    default: op
+  tiderep.cmd.adminreputation:
+    description: Permission for cmd adminreputation
+    default: op
