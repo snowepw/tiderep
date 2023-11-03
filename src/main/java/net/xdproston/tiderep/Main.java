@@ -1,12 +1,17 @@
 package net.xdproston.tiderep;
 
 import me.clip.placeholderapi.events.ExpansionsLoadedEvent;
+import net.xdproston.tiderep.impl.MySQL;
+import net.xdproston.tiderep.impl.SQLite;
+import net.xdproston.tiderep.interfaces.Database;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.command.PluginCommand;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
@@ -18,6 +23,7 @@ import net.xdproston.tiderep.logger.LoggerType;
 public final class Main extends JavaPlugin implements Listener
 {
     private static Main instance;
+    private static Database database;
     private static PlaceholderExpansion pe;
 
     public static void reload() {
@@ -67,10 +73,18 @@ public final class Main extends JavaPlugin implements Listener
         Files.initConfig();
         Files.Config.initValues();
 
-        Database.initDatabase();
+        String databaseType = Files.Config.DATABASE_TYPE.toLowerCase();
+
+        if (databaseType.equals("sqlite")) database = new SQLite();
+        else if (databaseType.equals("mysql")) database = new MySQL();
+        else {
+            Logger.send(LoggerType.WARNING, "The wrong database type is entered in the configuration! existing: sqlite, mysql. The default is sqlite");
+            database = new SQLite();
+        }
+
+        database.init();
         initCommands();
 
-        pm.registerEvents(new Database(), instance);
         pm.registerEvents(this, instance);
 
         if (pm.getPlugin("PlaceholderAPI") == null) {
@@ -87,6 +101,12 @@ public final class Main extends JavaPlugin implements Listener
         if (!pe.isRegistered()) pe.register();
     }
 
+    @EventHandler
+    public void onJoin(PlayerJoinEvent event) {
+        Player player = event.getPlayer();
+        if (!database.hasPlayerInDatabase(player)) database.addPlayerToDatabase(player);
+    }
+
     @Override
     public void onDisable() {
         instance = null;
@@ -94,5 +114,9 @@ public final class Main extends JavaPlugin implements Listener
 
     public static Main getInstance() {
         return instance;
+    }
+
+    public static Database getCurrentDatabase() {
+        return database;
     }
 }

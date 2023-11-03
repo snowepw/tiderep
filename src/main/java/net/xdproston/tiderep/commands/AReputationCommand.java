@@ -2,6 +2,9 @@ package net.xdproston.tiderep.commands;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import net.xdproston.tiderep.Main;
+import net.xdproston.tiderep.interfaces.Database;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -12,12 +15,13 @@ import org.bukkit.entity.Player;
 import com.google.common.collect.Lists;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.xdproston.tiderep.Database;
 import net.xdproston.tiderep.Files;
 import org.jetbrains.annotations.NotNull;
 
 public class AReputationCommand implements CommandExecutor, TabCompleter
 {
+    private static final Database database = Main.getCurrentDatabase();
+
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
         if (!(sender instanceof Player)) {
@@ -46,17 +50,17 @@ public class AReputationCommand implements CommandExecutor, TabCompleter
 
         switch (args[1]) {
             case "take": {
-                Database.setPlayerReputation(target, Database.getPlayerReputation(target) - amount);
+                database.setPlayerReputation(target, database.getPlayerReputation(target) - amount);
                 cmdSender.sendMessage(MiniMessage.miniMessage().deserialize(Files.Config.AREPUTATION_CMD_TAKE.replace("%player%", target.getName()).replace("%amount%", String.format("%d", amount))));
                 return true;
             }
             case "give": {
-                Database.setPlayerReputation(target, Database.getPlayerReputation(target) + amount);
+                database.setPlayerReputation(target, database.getPlayerReputation(target) + amount);
                 cmdSender.sendMessage(MiniMessage.miniMessage().deserialize(Files.Config.AREPUTATION_CMD_GIVE.replace("%player%", target.getName()).replace("%amount%", String.format("%d", amount))));
                 return true;
             }
             case "set": {
-                Database.setPlayerReputation(target, amount);
+                database.setPlayerReputation(target, amount);
                 cmdSender.sendMessage(MiniMessage.miniMessage().deserialize(Files.Config.AREPUTATION_CMD_SET.replace("%player%", target.getName()).replace("%amount%", String.format("%d", amount))));
                 return true;
             }
@@ -69,7 +73,7 @@ public class AReputationCommand implements CommandExecutor, TabCompleter
 
     @Override
     public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
-        if (args.length == 1) return Database.getPlayersInDatabase();
+        if (args.length == 1) return database.getPlayerNamesInDatabase();
         if (args.length == 2) return Lists.newArrayList("take", "give", "set");
         if (args.length == 3) return Lists.newArrayList("10");
         return new ArrayList<>();

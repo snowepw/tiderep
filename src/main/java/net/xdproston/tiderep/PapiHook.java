@@ -1,5 +1,6 @@
 package net.xdproston.tiderep;
 
+import net.xdproston.tiderep.interfaces.Database;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -25,14 +26,16 @@ public class PapiHook extends PlaceholderExpansion
 
     @Override
     public String onRequest(OfflinePlayer player, String params) {
+        Database database = Main.getCurrentDatabase();
+
         if (params.equalsIgnoreCase("reputation")) {
-            return Database.hasPlayerInDatabase((Player)player) ? String.format("%d", Database.getPlayerReputation((Player)player)) : null;
+            return database.hasPlayerInDatabase((Player)player) ? String.format("%d", database.getPlayerReputation((Player)player)) : null;
         }
 
         if (params.equalsIgnoreCase("advanced_reputation")) {
-            if (!Database.hasPlayerInDatabase((Player)player)) return null;
+            if (!database.hasPlayerInDatabase((Player)player)) return null;
 
-            int reputation = Database.getPlayerReputation((Player)player);
+            int reputation = database.getPlayerReputation((Player)player);
             if (reputation == 0) return ChatColor.translateAlternateColorCodes('&', String.format("&e%d", reputation));
             else if (reputation < 0) return ChatColor.translateAlternateColorCodes('&', String.format("&c%d", reputation));
             else return ChatColor.translateAlternateColorCodes('&', String.format("&a+%d", reputation));

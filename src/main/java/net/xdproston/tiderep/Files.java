@@ -33,6 +33,11 @@ public final class Files
             config.set("settings.startup-reputation", 0);
             config.set("settings.dislike-modificator", 1);
             config.set("settings.like-modificator", 1);
+            config.set("settings.database.type", "sqlite");
+            config.set("settings.database.mysql-ip-and-port", "localhost:3306");
+            config.set("settings.database.mysql-user", "root");
+            config.set("settings.database.mysql-password", "123123");
+            config.set("settings.database.mysql-use-database", "mydb");
 
             config.set("global-messages.no-perms", "<red>You dont have permission!");
             config.set("global-messages.only-player", "&cOnly player!");
@@ -103,6 +108,7 @@ public final class Files
     {
         public static int STARTUP_REPUTATION;
         public static int DISLIKE_MODIFICATOR, LIKE_MODIFICATOR;
+        public static String DATABASE_TYPE, DATABASE_MYSQL_IP_AND_PORT, DATABASE_MYSQL_USER, DATABASE_MYSQL_PASSWORD, DATABASE_MYSQL_USE_DB;
 
         public static String GLOBAL_NO_PERMISSION, GLOBAL_PLAYER_NOT_FOUND, GLOBAL_ONLY_PLAYER, GLOBAL_USE_SELF;
 
@@ -119,6 +125,11 @@ public final class Files
             STARTUP_REPUTATION = config.getInt("settings.startup-reputation");
             DISLIKE_MODIFICATOR = config.getInt("settings.dislike-modificator");
             LIKE_MODIFICATOR = config.getInt("settings.like-modificator");
+            DATABASE_TYPE = config.getString("settings.database.type");
+            DATABASE_MYSQL_IP_AND_PORT = config.getString("settings.database.mysql-ip-and-port");
+            DATABASE_MYSQL_USER = config.getString("settings.database.mysql-user");
+            DATABASE_MYSQL_PASSWORD = config.getString("settings.database.mysql-password");
+            DATABASE_MYSQL_USE_DB = config.getString("settings.database.mysql-use-database");
             GLOBAL_NO_PERMISSION = config.getString("global-messages.no-perms");
             GLOBAL_USE_SELF = config.getString("global-messages.self-use");
             GLOBAL_ONLY_PLAYER = config.getString("global-messages.only-player");
