@@ -4,21 +4,22 @@ import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
+import org.jetbrains.annotations.NotNull;
 
 public class PapiHook extends PlaceholderExpansion
 {
     @Override
-    public String getAuthor() {
+    public @NotNull String getAuthor() {
         return Main.getInstance().getDescription().getAuthors().get(0);
     }
 
     @Override
-    public String getIdentifier() {
+    public @NotNull String getIdentifier() {
         return "tiderep";
     }
 
     @Override
-    public String getVersion() {
+    public @NotNull String getVersion() {
         return "1.0.0";
     }
 
@@ -34,7 +35,7 @@ public class PapiHook extends PlaceholderExpansion
             int reputation = Database.getPlayerReputation((Player)player);
             if (reputation == 0) return ChatColor.translateAlternateColorCodes('&', String.format("&e%d", reputation));
             else if (reputation < 0) return ChatColor.translateAlternateColorCodes('&', String.format("&c%d", reputation));
-            else if (reputation > 0) return ChatColor.translateAlternateColorCodes('&', String.format("&a+%d", reputation));
+            else return ChatColor.translateAlternateColorCodes('&', String.format("&a+%d", reputation));
         }
 
         return null;
