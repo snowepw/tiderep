@@ -1,12 +1,12 @@
 name: TideReputation
 author: xdproston
-version: 1.0
+version: 1.1
 api-version: 1.13
 libraries:
   - net.kyori:adventure-text-minimessage:4.14.0
   - org.xerial:sqlite-jdbc:3.8.11.2
   - mysql:mysql-connector-java:8.0.33
-softdepend: [PlaceholderAPI]
+depend: [PlaceholderAPI]
 main: net.xdproston.tiderep.Main
 commands:
   reputation:

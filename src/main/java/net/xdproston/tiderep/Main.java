@@ -87,11 +87,6 @@ public final class Main extends JavaPlugin implements Listener
 
         pm.registerEvents(this, instance);
 
-        if (pm.getPlugin("PlaceholderAPI") == null) {
-            Logger.send(LoggerType.SEVERE, "PlaceholderAPI not found! The plugin will not work without it.");
-            pm.disablePlugin(instance);
-        }
-
         PlaceholderExpansion pe = Main.pe = new PapiHook();
         pe.register();
     }
