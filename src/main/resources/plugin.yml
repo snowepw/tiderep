@@ -1,7 +1,7 @@
 name: TideReputation
 author: xdproston
 version: 1.0
-api-version: 1.19
+api-version: 1.13
 libraries: [net.kyori:adventure-text-minimessage:4.14.0]
 softdepend: [PlaceholderAPI]
 main: net.xdproston.tiderep.Main
