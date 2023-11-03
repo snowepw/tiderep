@@ -14,11 +14,12 @@ import net.xdproston.tiderep.Database;
 import net.xdproston.tiderep.Files;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import org.jetbrains.annotations.NotNull;
 
 public class ReputationCommand implements CommandExecutor, TabCompleter
 {
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
         if (!(sender instanceof Player)) {
             sender.sendMessage(ChatColor.translateAlternateColorCodes('&', Files.Config.GLOBAL_ONLY_PLAYER));
             return true;
@@ -35,7 +36,7 @@ public class ReputationCommand implements CommandExecutor, TabCompleter
             cmdSender.sendMessage(MiniMessage.miniMessage().deserialize(Files.Config.GLOBAL_PLAYER_NOT_FOUND));
             return true;
         }
-        if (target == (Player)sender) {
+        if (target == sender) {
             cmdSender.sendMessage(MiniMessage.miniMessage().deserialize(Files.Config.GLOBAL_USE_SELF));
             return true;
         }
@@ -64,7 +65,7 @@ public class ReputationCommand implements CommandExecutor, TabCompleter
     }
 
     @Override
-    public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
+    public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
         if (args.length == 1) return Database.getPlayersInDatabase();
         if (args.length == 2) return Lists.newArrayList("+", "-");
         return new ArrayList<>();
