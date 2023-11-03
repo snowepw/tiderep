@@ -1,9 +1,12 @@
 package net.xdproston.tiderep;
 
+import me.clip.placeholderapi.events.ExpansionsLoadedEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.command.PluginCommand;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
@@ -12,9 +15,10 @@ import net.xdproston.tiderep.commands.ReputationCommand;
 import net.xdproston.tiderep.logger.Logger;
 import net.xdproston.tiderep.logger.LoggerType;
 
-public final class Main extends JavaPlugin
+public final class Main extends JavaPlugin implements Listener
 {
     private static Main instance;
+    private static PlaceholderExpansion pe;
 
     public static void reload() {
         Files.initFolder();
@@ -67,16 +71,20 @@ public final class Main extends JavaPlugin
         initCommands();
 
         pm.registerEvents(new Database(), instance);
+        pm.registerEvents(this, instance);
 
         if (pm.getPlugin("PlaceholderAPI") == null) {
             Logger.send(LoggerType.SEVERE, "PlaceholderAPI not found! The plugin will not work without it.");
             pm.disablePlugin(instance);
         }
 
-        PlaceholderExpansion pe = new PapiHook();
+        PlaceholderExpansion pe = Main.pe = new PapiHook();
         pe.register();
+    }
 
-        Bukkit.getScheduler().runTaskTimerAsynchronously(instance, () -> {if (!pe.isRegistered()) Bukkit.getScheduler().runTask(instance, () -> {pe.register();});}, 0, 100);
+    @EventHandler
+    public void ExpansionLoadedEvent(ExpansionsLoadedEvent event) {
+        if (!pe.isRegistered()) pe.register();
     }
 
     @Override
