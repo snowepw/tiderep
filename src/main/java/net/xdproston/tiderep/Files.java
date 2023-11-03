@@ -71,10 +71,7 @@ public final class Files
             }
         }
 
-        String toWrite = """
-                placeholders:
-                %tiderep_reputation%, %tiderep_advanced_reputation%
-                """;
+        String toWrite = "placeholders: %tiderep_reputation%, %tiderep_advanced_reputation%";
 
         try (FileOutputStream fos = new FileOutputStream(placeholders)) {fos.write(toWrite.getBytes());} 
         catch (Exception e) {
@@ -90,10 +87,7 @@ public final class Files
             }
         }
 
-        String toWrite = """
-                tiderep.cmd.reputation - /reputation
-                tiderep.cmd.adminreputation - /adminreputation
-                """;
+        String toWrite = "tiderep.cmd.reputation - /reputation \ntiderep.cmd.adminreputation - /adminreputation";
 
         try (FileOutputStream fos = new FileOutputStream(perms)) {fos.write(toWrite.getBytes());} 
         catch (Exception e) {
@@ -105,7 +99,7 @@ public final class Files
         return config;
     }
 
-    public final class Config
+    public static final class Config
     {
         public static int STARTUP_REPUTATION;
         public static int DISLIKE_MODIFICATOR, LIKE_MODIFICATOR;
