@@ -104,6 +104,7 @@ public final class Main extends JavaPlugin implements Listener
 
     @Override
     public void onDisable() {
+        database.close();
         instance = null;
     }
 
