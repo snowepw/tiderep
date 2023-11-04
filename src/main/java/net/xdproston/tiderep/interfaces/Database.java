@@ -12,13 +12,13 @@ public interface Database
     default void execute(Statement stmt, String sql) {
         try { stmt.execute(sql);
         } catch (Exception e) {
-            Logger.send(LoggerType.SEVERE, "An error occurred during the creation of the statement:" + String.format("%s - %s", e.getClass().getName(), e.getMessage()));
+            Logger.send(LoggerType.SEVERE, "An error occurred while executing sql script:" + String.format("%s - %s", e.getClass().getName(), e.getMessage()));
         }
     }
     default ResultSet executeQuery(Statement stmt, String sql) {
         try { return stmt.executeQuery(sql);}
         catch (Exception e) {
-            Logger.send(LoggerType.SEVERE, "An error occurred during the creation of the statement:" + String.format("%s - %s", e.getClass().getName(), e.getMessage()));
+            Logger.send(LoggerType.SEVERE, "An error occurred during while executing sql script:" + String.format("%s - %s", e.getClass().getName(), e.getMessage()));
         }
         return null;
     }
