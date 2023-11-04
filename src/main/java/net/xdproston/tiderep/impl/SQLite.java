@@ -16,14 +16,15 @@ public class SQLite implements Database
 {
     private static final String DB_PATH_STR = "jdbc:sqlite:" + Main.getInstance().getDataFolder().getAbsolutePath() + "/users.db";
 
+    private Connection connect;
     private Statement stmt;
 
     @Override
     public void init() {
         try {
             Class.forName("org.sqlite.JDBC");
-            Connection connection = DriverManager.getConnection(DB_PATH_STR);
-            stmt = connection.createStatement();
+            connect = DriverManager.getConnection(DB_PATH_STR);
+            stmt = connect.createStatement();
         } catch (Exception e) {
             Logger.send(LoggerType.SEVERE, "An error occurred during the connection of the sqlite database:" + String.format("%s - %s", e.getClass().getName(), e.getMessage()));
         }
@@ -107,5 +108,15 @@ public class SQLite implements Database
     @Override
     public void setPlayerReputation(Player target, int reputation) {
         execute(stmt, String.format("UPDATE users SET reputation = %d WHERE name = '%s';", reputation, target.getName()));
+    }
+
+    @Override
+    public void close() {
+        try {
+            if (stmt != null) stmt.close();
+            if (connect != null) connect.close();
+        } catch (Exception e) {
+            Logger.send(LoggerType.SEVERE, "An error occurred while closing the database:" + String.format("%s - %s", e.getClass().getName(), e.getMessage()));
+        }
     }
 }

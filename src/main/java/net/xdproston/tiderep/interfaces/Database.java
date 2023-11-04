@@ -30,5 +30,5 @@ public interface Database
     boolean containsPlayerInSends(Player target, Player player);
     ArrayList<String> getPlayerNamesInDatabase();
     void setPlayerReputation(Player target, int reputation);
-
+    void close();
 }

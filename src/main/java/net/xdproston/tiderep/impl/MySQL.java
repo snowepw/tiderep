@@ -13,14 +13,15 @@ import java.util.ArrayList;
 
 public class MySQL implements Database
 {
+    private Connection connect;
     private Statement stmt;
 
     @Override
     public void init() {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection connection = DriverManager.getConnection(String.format("jdbc:mysql://%s/%s", Files.Config.DATABASE_MYSQL_IP_AND_PORT, Files.Config.DATABASE_MYSQL_USE_DB), Files.Config.DATABASE_MYSQL_USER, Files.Config.DATABASE_MYSQL_PASSWORD);
-            stmt = connection.createStatement();
+            connect = DriverManager.getConnection(String.format("jdbc:mysql://%s/%s", Files.Config.DATABASE_MYSQL_IP_AND_PORT, Files.Config.DATABASE_MYSQL_USE_DB), Files.Config.DATABASE_MYSQL_USER, Files.Config.DATABASE_MYSQL_PASSWORD);
+            stmt = connect.createStatement();
         } catch (Exception e) {
             Logger.send(LoggerType.SEVERE, "An error occurred during the connection of the mysql database:" + String.format("%s - %s", e.getClass().getName(), e.getMessage()));
         }
@@ -104,5 +105,15 @@ public class MySQL implements Database
     @Override
     public void setPlayerReputation(Player target, int reputation) {
         execute(stmt, String.format("UPDATE users SET reputation = %d WHERE name = '%s';", reputation, target.getName()));
+    }
+
+    @Override
+    public void close() {
+        try {
+            if (stmt != null) stmt.close();
+            if (connect != null) connect.close();
+        } catch (Exception e) {
+            Logger.send(LoggerType.SEVERE, "An error occurred while closing the database:" + String.format("%s - %s", e.getClass().getName(), e.getMessage()));
+        }
     }
 }
