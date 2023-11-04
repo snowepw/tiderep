@@ -26,7 +26,7 @@ public class MySQL implements Database
             Logger.send(LoggerType.SEVERE, "An error occurred during the connection of the mysql database:" + String.format("%s - %s", e.getClass().getName(), e.getMessage()));
         }
 
-        execute(stmt, "CREATE TABLE IF NOT EXISTS users(\"name\" TINYTEXT UNIQUE NOT NULL, \"reputation\" INT NOT NULL, \"sends\" LONGTEXT DEFAULT 'NONE');");
+        execute(stmt, "CREATE TABLE IF NOT EXISTS users(name VARCHAR(256) UNIQUE NOT NULL, reputation INT NOT NULL, sends LONGTEXT);");
     }
 
     @Override
@@ -42,7 +42,7 @@ public class MySQL implements Database
 
     @Override
     public void addPlayerToDatabase(Player target) {
-        execute(stmt, String.format("INSERT INTO users(name, reputation) VALUES('%s', %d);", target.getName(), Files.Config.STARTUP_REPUTATION));
+        execute(stmt, String.format("INSERT INTO users VALUES('%s', %d, 'NONE');", target.getName(), Files.Config.STARTUP_REPUTATION));
     }
 
     @Override
