@@ -51,10 +51,10 @@ public final class Files
             config.set("commands.reputation.message.to-recipient-up", "<white>The <gold>%player% <white>player has boosted your reputation.");
             config.set("commands.reputation.message.to-recipient-down", "<white>The <gold>%player% <white>player has lowered your reputation.");
 
-            config.set("commands.areputation.usage", "<white>Usage <gray>- <gold>/%label% <player name> <take/give/set> <amount>");
-            config.set("commands.areputation.take", "<white>You have <red>removed <white>a reputation to the player <gold>%player% <white>in the amount of <gold>%amount%<white>.");
-            config.set("commands.areputation.give", "<white>You have <green>added <white>a reputation to the player <gold>%player% <white>in the amount of <gold>%amount%<white>.");
-            config.set("commands.areputation.set", "<white>You have <yellow>set <white>a reputation to the player <gold>%player% <white>in the amount of <gold>%amount%<white>.");
+            config.set("commands.areputation.usage", "&f<white>Usage &7<gray>- &6<gold>/%label% <player name> <take/give/set> <amount>");
+            config.set("commands.areputation.take", "&f<white>You have &c<red>removed &f<white>a reputation to the player &6<gold>%player% &f<white>in the amount of &6<gold>%amount%&f<white>.");
+            config.set("commands.areputation.give", "&f<white>You have &a<green>added &f<white>a reputation to the player &6<gold>%player% &f<white>in the amount of &6<gold>%amount%&f<white>.");
+            config.set("commands.areputation.set", "&f<white>You have &e<yellow>set &f<white>a reputation to the player &6<gold>%player% &f<white>in the amount of &6<gold>%amount%&f<white>.");
 
             try {config.save(file);}
             catch (Exception e) {

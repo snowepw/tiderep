@@ -2,18 +2,15 @@ package net.xdproston.tiderep.commands;
 
 import java.util.ArrayList;
 import java.util.List;
-
+import me.clip.placeholderapi.libs.kyori.adventure.audience.Audience;
+import me.clip.placeholderapi.libs.kyori.adventure.text.ComponentLike;
 import net.xdproston.tiderep.Main;
 import net.xdproston.tiderep.interfaces.Database;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabCompleter;
+import org.bukkit.command.*;
 import org.bukkit.entity.Player;
 import com.google.common.collect.Lists;
-import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.xdproston.tiderep.Files;
 import org.jetbrains.annotations.NotNull;
@@ -21,51 +18,83 @@ import org.jetbrains.annotations.NotNull;
 public class AReputationCommand implements CommandExecutor, TabCompleter
 {
     private static final Database database = Main.getCurrentDatabase();
+    private static final MiniMessage mm = MiniMessage.miniMessage();
+
+    private static @NotNull String rc(String target) {
+        return ChatColor.translateAlternateColorCodes('&', target);
+    }
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
-        if (!(sender instanceof Player)) {
-            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', Files.Config.GLOBAL_ONLY_PLAYER));
-            return true;
-        }
+        boolean isPlayer = sender instanceof Player;
+        Audience audience = null;
 
-        Audience cmdSender = (Audience)sender;
+        if (isPlayer) audience = (Audience)sender;
+
         if (args.length < 3) {
-            cmdSender.sendMessage(MiniMessage.miniMessage().deserialize(Files.Config.AREPUTATION_CMD_USAGE.replace("%label%", label)));
+            if (isPlayer) {
+                audience.sendMessage((ComponentLike)mm.deserialize(ChatColor.stripColor(Files.Config.AREPUTATION_CMD_USAGE.replace("%label%", label))));
+                return true;
+            }
+            sender.sendMessage(rc(mm.stripTags(Files.Config.AREPUTATION_CMD_USAGE.replace("%label%", label))));
             return true;
         }
 
         Player target = Bukkit.getPlayer(args[0]);
         if (target == null) {
-            cmdSender.sendMessage(MiniMessage.miniMessage().deserialize(Files.Config.GLOBAL_PLAYER_NOT_FOUND));
+            if (isPlayer) {
+                audience.sendMessage((ComponentLike)mm.deserialize(ChatColor.stripColor(Files.Config.GLOBAL_PLAYER_NOT_FOUND)));
+                return true;
+            }
+            sender.sendMessage(rc(mm.stripTags(Files.Config.GLOBAL_PLAYER_NOT_FOUND)));
             return true;
         }
 
         int amount;
-        try {amount = Integer.parseInt(args[2]);}
-        catch (Exception e) {
-            cmdSender.sendMessage(MiniMessage.miniMessage().deserialize(Files.Config.AREPUTATION_CMD_USAGE.replace("%label%", label)));
+        try { amount = Integer.parseInt(args[2]);
+        } catch (Exception e) {
+            if (isPlayer) {
+                audience.sendMessage((ComponentLike)mm.deserialize(ChatColor.stripColor(Files.Config.AREPUTATION_CMD_USAGE.replace("%label%", label))));
+                return true;
+            }
+            sender.sendMessage(rc(mm.stripTags(Files.Config.AREPUTATION_CMD_USAGE.replace("%label%", label))));
             return true;
         }
 
         switch (args[1]) {
             case "take": {
                 database.setPlayerReputation(target, database.getPlayerReputation(target) - amount);
-                cmdSender.sendMessage(MiniMessage.miniMessage().deserialize(Files.Config.AREPUTATION_CMD_TAKE.replace("%player%", target.getName()).replace("%amount%", String.format("%d", amount))));
+                if (isPlayer) {
+                    audience.sendMessage((ComponentLike)mm.deserialize(ChatColor.stripColor(Files.Config.AREPUTATION_CMD_TAKE.replace("%player%", target.getName()).replace("%amount%", String.format("%d", amount)))));
+                    return true;
+                }
+                sender.sendMessage(rc(mm.stripTags(Files.Config.AREPUTATION_CMD_TAKE.replace("%player%", target.getName()).replace("%amount%", String.format("%d", amount)))));
                 return true;
             }
             case "give": {
                 database.setPlayerReputation(target, database.getPlayerReputation(target) + amount);
-                cmdSender.sendMessage(MiniMessage.miniMessage().deserialize(Files.Config.AREPUTATION_CMD_GIVE.replace("%player%", target.getName()).replace("%amount%", String.format("%d", amount))));
+                if (isPlayer) {
+                    audience.sendMessage((ComponentLike)mm.deserialize(ChatColor.stripColor(Files.Config.AREPUTATION_CMD_GIVE.replace("%player%", target.getName()).replace("%amount%", String.format("%d", amount)))));
+                    return true;
+                }
+                sender.sendMessage(rc(mm.stripTags(Files.Config.AREPUTATION_CMD_GIVE.replace("%player%", target.getName()).replace("%amount%", String.format("%d", amount)))));
                 return true;
             }
             case "set": {
                 database.setPlayerReputation(target, amount);
-                cmdSender.sendMessage(MiniMessage.miniMessage().deserialize(Files.Config.AREPUTATION_CMD_SET.replace("%player%", target.getName()).replace("%amount%", String.format("%d", amount))));
+                if (isPlayer) {
+                    audience.sendMessage((ComponentLike)mm.deserialize(ChatColor.stripColor(Files.Config.AREPUTATION_CMD_SET.replace("%player%", target.getName()).replace("%amount%", String.format("%d", amount)))));
+                    return true;
+                }
+                sender.sendMessage(rc(mm.stripTags(Files.Config.AREPUTATION_CMD_SET.replace("%player%", target.getName()).replace("%amount%", String.format("%d", amount)))));
                 return true;
             }
             default: {
-                cmdSender.sendMessage(MiniMessage.miniMessage().deserialize(Files.Config.AREPUTATION_CMD_USAGE.replace("%label%", label)));
+                if (isPlayer) {
+                    audience.sendMessage((ComponentLike)mm.deserialize(ChatColor.stripColor(Files.Config.AREPUTATION_CMD_USAGE.replace("%label%", label))));
+                    return true;
+                }
+                sender.sendMessage(rc(mm.stripTags(Files.Config.AREPUTATION_CMD_USAGE.replace("%label%", label))));
                 return true;
             }
         }
