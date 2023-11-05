@@ -1,2 +1,2 @@
 # tiderep
-reputation plugin for spigot
+Reputation plugin for spigot
