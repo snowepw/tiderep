@@ -56,6 +56,9 @@ public final class Files
             config.set("commands.areputation.give", "&f<white>You have &a<green>added &f<white>a reputation to the player &6<gold>%player% &f<white>in the amount of &6<gold>%amount%&f<white>.");
             config.set("commands.areputation.set", "&f<white>You have &e<yellow>set &f<white>a reputation to the player &6<gold>%player% &f<white>in the amount of &6<gold>%amount%&f<white>.");
 
+            config.set("commands.reputationreload.usage", "&f<white>usage&7<grey>: &6<gold>/reputationreload");
+            config.set("commands.reputationreload.reloaded", "&f<white>Plugin successfully reloaded!");
+
             try {config.save(file);}
             catch (Exception e) {
                 Logger.send(LoggerType.SEVERE, "An error occurred while loading the configuration file:" + String.format("%s - %s", e.getClass().getName(), e.getMessage()));
@@ -92,16 +95,12 @@ public final class Files
             }
         }
 
-        String toWrite = "tiderep.cmd.reputation - /reputation \ntiderep.cmd.adminreputation - /adminreputation";
+        String toWrite = "tiderep.cmd.reputation - /reputation\ntiderep.cmd.adminreputation - /adminreputation\ntiderep.cmd.reputationreload - /repuationreload";
 
         try (FileOutputStream fos = new FileOutputStream(perms)) {fos.write(toWrite.getBytes());} 
         catch (Exception e) {
             Logger.send(LoggerType.SEVERE, "An error occurred while writing a string to file 'permissions.txt':" + String.format("%s - %s", e.getClass().getName(), e.getMessage()));
         }
-    }
-
-    public static YamlConfiguration getConfig() {
-        return config;
     }
 
     public static final class Config
@@ -115,6 +114,8 @@ public final class Files
         public static String REPUTATION_CMD_USAGE, REPUTATION_CMD_ALREADY, REPUTATION_CMD_TO_SENDER_UP, REPUTATION_CMD_TO_SENDER_DOWN, REPUTATION_CMD_TO_RECIPIENT_UP, REPUTATION_CMD_TO_RECIPIENT_DOWN;
 
         public static String AREPUTATION_CMD_USAGE, AREPUTATION_CMD_TAKE, AREPUTATION_CMD_GIVE, AREPUTATION_CMD_SET;
+
+        public static String REPUTATIONRELOAD_CMD_USAGE, REPUTATIONRELOAD_CMD_RELOADED;
 
         public static void initValues() {
             try {config.load(file);}
@@ -144,6 +145,8 @@ public final class Files
             AREPUTATION_CMD_TAKE = config.getString("commands.areputation.take");
             AREPUTATION_CMD_GIVE = config.getString("commands.areputation.give");
             AREPUTATION_CMD_SET = config.getString("commands.areputation.set");
+            REPUTATIONRELOAD_CMD_RELOADED = config.getString("commands.reputationreload.reloaded");
+            REPUTATIONRELOAD_CMD_USAGE = config.getString("commands.reputationreload.usage");
         }
     }
 }
