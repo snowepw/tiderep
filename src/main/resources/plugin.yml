@@ -1,6 +1,6 @@
 name: TideReputation
 author: xdproston
-version: 1.2
+version: 1.3
 api-version: 1.13
 libraries:
   - net.kyori:adventure-text-minimessage:4.14.0
@@ -17,10 +17,17 @@ commands:
     aliases: [arep, adminrep, areputation]
     description: Admin reputation command of TideReputation.
     permission: tiderep.cmd.adminreputation
+  reputationreload:
+    aliases: [repreload]
+    description: Reload command of TideReputation.
+    permission: tiderep.cmd.reputationreload
 permissions:
   tiderep.cmd.reputation:
     description: Permission for cmd reputation
     default: op
   tiderep.cmd.adminreputation:
     description: Permission for cmd adminreputation
+    default: op
+  tiderep.cmd.reputationreload:
+    description: Permission for cmd reputationreload
     default: op
