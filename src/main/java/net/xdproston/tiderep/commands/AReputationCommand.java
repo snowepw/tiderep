@@ -2,8 +2,6 @@ package net.xdproston.tiderep.commands;
 
 import java.util.ArrayList;
 import java.util.List;
-import me.clip.placeholderapi.libs.kyori.adventure.audience.Audience;
-import me.clip.placeholderapi.libs.kyori.adventure.text.ComponentLike;
 import net.xdproston.tiderep.Main;
 import net.xdproston.tiderep.interfaces.Database;
 import org.bukkit.Bukkit;
@@ -12,6 +10,7 @@ import org.bukkit.command.*;
 import org.bukkit.entity.Player;
 import com.google.common.collect.Lists;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.audience.Audience;
 import net.xdproston.tiderep.Files;
 import org.jetbrains.annotations.NotNull;
 
@@ -33,7 +32,7 @@ public class AReputationCommand implements CommandExecutor, TabCompleter
 
         if (args.length < 3) {
             if (isPlayer) {
-                audience.sendMessage((ComponentLike)mm.deserialize(ChatColor.stripColor(Files.Config.AREPUTATION_CMD_USAGE.replace("%label%", label))));
+                audience.sendMessage(mm.deserialize(ChatColor.stripColor(Files.Config.AREPUTATION_CMD_USAGE.replace("%label%", label))));
                 return true;
             }
             sender.sendMessage(rc(mm.stripTags(Files.Config.AREPUTATION_CMD_USAGE.replace("%label%", label))));
@@ -43,7 +42,7 @@ public class AReputationCommand implements CommandExecutor, TabCompleter
         Player target = Bukkit.getPlayer(args[0]);
         if (target == null) {
             if (isPlayer) {
-                audience.sendMessage((ComponentLike)mm.deserialize(ChatColor.stripColor(Files.Config.GLOBAL_PLAYER_NOT_FOUND)));
+                audience.sendMessage(mm.deserialize(ChatColor.stripColor(Files.Config.GLOBAL_PLAYER_NOT_FOUND)));
                 return true;
             }
             sender.sendMessage(rc(mm.stripTags(Files.Config.GLOBAL_PLAYER_NOT_FOUND)));
@@ -54,18 +53,18 @@ public class AReputationCommand implements CommandExecutor, TabCompleter
         try { amount = Integer.parseInt(args[2]);
         } catch (Exception e) {
             if (isPlayer) {
-                audience.sendMessage((ComponentLike)mm.deserialize(ChatColor.stripColor(Files.Config.AREPUTATION_CMD_USAGE.replace("%label%", label))));
+                audience.sendMessage(mm.deserialize(ChatColor.stripColor(Files.Config.AREPUTATION_CMD_USAGE.replace("%label%", label))));
                 return true;
             }
             sender.sendMessage(rc(mm.stripTags(Files.Config.AREPUTATION_CMD_USAGE.replace("%label%", label))));
             return true;
         }
 
-        switch (args[1]) {
+        switch (args[1].toLowerCase()) {
             case "take": {
                 database.setPlayerReputation(target, database.getPlayerReputation(target) - amount);
                 if (isPlayer) {
-                    audience.sendMessage((ComponentLike)mm.deserialize(ChatColor.stripColor(Files.Config.AREPUTATION_CMD_TAKE.replace("%player%", target.getName()).replace("%amount%", String.format("%d", amount)))));
+                    audience.sendMessage(mm.deserialize(ChatColor.stripColor(Files.Config.AREPUTATION_CMD_TAKE.replace("%player%", target.getName()).replace("%amount%", String.format("%d", amount)))));
                     return true;
                 }
                 sender.sendMessage(rc(mm.stripTags(Files.Config.AREPUTATION_CMD_TAKE.replace("%player%", target.getName()).replace("%amount%", String.format("%d", amount)))));
@@ -74,7 +73,7 @@ public class AReputationCommand implements CommandExecutor, TabCompleter
             case "give": {
                 database.setPlayerReputation(target, database.getPlayerReputation(target) + amount);
                 if (isPlayer) {
-                    audience.sendMessage((ComponentLike)mm.deserialize(ChatColor.stripColor(Files.Config.AREPUTATION_CMD_GIVE.replace("%player%", target.getName()).replace("%amount%", String.format("%d", amount)))));
+                    audience.sendMessage(mm.deserialize(ChatColor.stripColor(Files.Config.AREPUTATION_CMD_GIVE.replace("%player%", target.getName()).replace("%amount%", String.format("%d", amount)))));
                     return true;
                 }
                 sender.sendMessage(rc(mm.stripTags(Files.Config.AREPUTATION_CMD_GIVE.replace("%player%", target.getName()).replace("%amount%", String.format("%d", amount)))));
@@ -83,7 +82,7 @@ public class AReputationCommand implements CommandExecutor, TabCompleter
             case "set": {
                 database.setPlayerReputation(target, amount);
                 if (isPlayer) {
-                    audience.sendMessage((ComponentLike)mm.deserialize(ChatColor.stripColor(Files.Config.AREPUTATION_CMD_SET.replace("%player%", target.getName()).replace("%amount%", String.format("%d", amount)))));
+                    audience.sendMessage(mm.deserialize(ChatColor.stripColor(Files.Config.AREPUTATION_CMD_SET.replace("%player%", target.getName()).replace("%amount%", String.format("%d", amount)))));
                     return true;
                 }
                 sender.sendMessage(rc(mm.stripTags(Files.Config.AREPUTATION_CMD_SET.replace("%player%", target.getName()).replace("%amount%", String.format("%d", amount)))));
@@ -91,7 +90,7 @@ public class AReputationCommand implements CommandExecutor, TabCompleter
             }
             default: {
                 if (isPlayer) {
-                    audience.sendMessage((ComponentLike)mm.deserialize(ChatColor.stripColor(Files.Config.AREPUTATION_CMD_USAGE.replace("%label%", label))));
+                    audience.sendMessage(mm.deserialize(ChatColor.stripColor(Files.Config.AREPUTATION_CMD_USAGE.replace("%label%", label))));
                     return true;
                 }
                 sender.sendMessage(rc(mm.stripTags(Files.Config.AREPUTATION_CMD_USAGE.replace("%label%", label))));
@@ -103,7 +102,7 @@ public class AReputationCommand implements CommandExecutor, TabCompleter
     @Override
     public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
         if (args.length == 1) return database.getPlayerNamesInDatabase();
-        if (args.length == 2) return Lists.newArrayList("take", "give", "set");
+        if (args.length == 2) return Lists.newArrayList("take", "give", "set", "reload");
         if (args.length == 3) return Lists.newArrayList("10");
         return new ArrayList<>();
     }

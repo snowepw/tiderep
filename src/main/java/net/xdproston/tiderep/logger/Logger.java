@@ -12,7 +12,7 @@ public final class Logger
         StringBuilder sb = new StringBuilder();
         for (String message : messages) sb.append(message).append(' ');
 
-        String format = String.format("[%s] %s", prefix, sb.toString());
+        String format = String.format("[%s] %s", prefix, sb);
         switch (type) {
             case INFO:
                 logger.info(format);

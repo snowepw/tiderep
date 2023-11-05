@@ -2,7 +2,6 @@ package net.xdproston.tiderep.commands;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import net.xdproston.tiderep.Main;
 import net.xdproston.tiderep.interfaces.Database;
 import org.bukkit.Bukkit;

@@ -32,7 +32,6 @@ public final class Main extends JavaPlugin implements Listener
         Files.initPlaceholdersFile();
         Files.initConfig();
         Files.Config.initValues();
-        initCommands();
     }
 
     @Override
@@ -48,6 +47,7 @@ public final class Main extends JavaPlugin implements Listener
     private static void initCommands() {
         PluginCommand pc1 = instance.getCommand("reputation");
         PluginCommand pc2 = instance.getCommand("adminreputation");
+        PluginCommand pc3 = instance.getCommand("reputationreload");
 
         if (pc1 != null) {
             pc1.setExecutor(new ReputationCommand());
@@ -59,6 +59,10 @@ public final class Main extends JavaPlugin implements Listener
             pc2.setExecutor(new AReputationCommand());
             pc2.setTabCompleter(new AReputationCommand());
             pc2.setPermissionMessage(Files.Config.GLOBAL_NO_PERMISSION);
+        }
+
+        if (pc3 != null) {
+            pc3.setPermissionMessage(Files.Config.GLOBAL_NO_PERMISSION);
         }
     }
 
