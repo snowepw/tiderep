@@ -16,8 +16,8 @@ public class SQLite implements Database
 {
     private static final String DB_PATH_STR = "jdbc:sqlite:" + Main.getInstance().getDataFolder().getAbsolutePath() + "/users.db";
 
-    private Connection connect;
-    private Statement stmt;
+    protected Connection connect;
+    protected Statement stmt;
 
     @Override
     public void init() {
