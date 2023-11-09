@@ -1,5 +1,7 @@
 package net.xdproston.tiderep.impl;
 
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 import net.xdproston.tiderep.Files;
 import net.xdproston.tiderep.Main;
 import net.xdproston.tiderep.interfaces.Database;
@@ -7,7 +9,6 @@ import net.xdproston.tiderep.logger.Logger;
 import net.xdproston.tiderep.logger.LoggerType;
 import org.bukkit.entity.Player;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -16,14 +17,20 @@ public class SQLite implements Database
 {
     private static final String DB_PATH_STR = "jdbc:sqlite:" + Main.getInstance().getDataFolder().getAbsolutePath() + "/users.db";
 
+    protected HikariDataSource hds;
     protected Connection connect;
     protected Statement stmt;
 
     @Override
     public void init() {
         try {
-            Class.forName("org.sqlite.JDBC");
-            connect = DriverManager.getConnection(DB_PATH_STR);
+            HikariConfig hc = new HikariConfig();
+            hc.setPoolName("SQLite");
+            hc.setDriverClassName("org.sqlite.JDBC");
+            hc.setJdbcUrl(DB_PATH_STR);
+
+            hds = new HikariDataSource(hc);
+            connect = hds.getConnection();
             stmt = connect.createStatement();
         } catch (Exception e) {
             Logger.send(LoggerType.SEVERE, "An error occurred during the connection of the sqlite database:" + String.format("%s - %s", e.getClass().getName(), e.getMessage()));
