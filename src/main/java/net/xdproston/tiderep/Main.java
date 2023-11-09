@@ -47,7 +47,6 @@ public final class Main extends JavaPlugin implements Listener
     private static void initCommands() {
         PluginCommand pc1 = instance.getCommand("reputation");
         PluginCommand pc2 = instance.getCommand("adminreputation");
-        PluginCommand pc3 = instance.getCommand("reputationreload");
 
         if (pc1 != null) {
             pc1.setExecutor(new ReputationCommand());
@@ -60,13 +59,9 @@ public final class Main extends JavaPlugin implements Listener
             pc2.setTabCompleter(new AReputationCommand());
             pc2.setPermissionMessage(Files.Config.GLOBAL_NO_PERMISSION);
         }
-
-        if (pc3 != null) {
-            pc3.setPermissionMessage(Files.Config.GLOBAL_NO_PERMISSION);
-        }
     }
 
-    @Override 
+    @Override
     public void onEnable() {
         instance = this;
         PluginManager pm = Bukkit.getPluginManager();
@@ -91,7 +86,7 @@ public final class Main extends JavaPlugin implements Listener
 
         pm.registerEvents(this, instance);
 
-        PlaceholderExpansion pe = Main.pe = new PapiHook();
+        pe = new PapiHook();
         pe.register();
     }
 
