@@ -5,95 +5,81 @@ import java.util.List;
 import net.xdproston.tiderep.Main;
 import net.xdproston.tiderep.interfaces.Database;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;
 import com.google.common.collect.Lists;
-import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.audience.Audience;
+import com.mojang.brigadier.StringReader;
+import com.mojang.brigadier.arguments.StringArgumentType;
 import net.xdproston.tiderep.Files;
 import org.jetbrains.annotations.NotNull;
 
 public class AReputationCommand implements CommandExecutor, TabCompleter
 {
     private static final Database database = Main.getCurrentDatabase();
-    private static final MiniMessage mm = MiniMessage.miniMessage();
-
-    private static @NotNull String rc(String target) {
-        return ChatColor.translateAlternateColorCodes('&', target);
-    }
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
-        boolean isPlayer = sender instanceof Player;
-        Audience audience = null;
-
-        if (isPlayer) audience = (Audience)sender;
+        Audience audience = (Audience) sender;
 
         if (args.length < 3) {
-            if (isPlayer) {
-                audience.sendMessage(mm.deserialize(ChatColor.stripColor(Files.Config.AREPUTATION_CMD_USAGE.replace("%label%", label))));
-                return true;
-            }
-            sender.sendMessage(rc(mm.stripTags(Files.Config.AREPUTATION_CMD_USAGE.replace("%label%", label))));
+            audience.sendMessage(Files.message("commands.areputation.usage", Files.Config.AREPUTATION_CMD_USAGE,
+                    Placeholder.parsed("label", label)));
             return true;
         }
 
-        Player target = Bukkit.getPlayer(args[0]);
+        StringReader reader = new StringReader(String.join(" ", args));
+        String targetName;
+        try {
+            targetName = StringArgumentType.word().parse(reader);
+        } catch (com.mojang.brigadier.exceptions.CommandSyntaxException e) {
+            audience.sendMessage(Files.message("commands.areputation.usage", Files.Config.AREPUTATION_CMD_USAGE,
+                    Placeholder.parsed("label", label)));
+            return true;
+        }
+        Player target = Bukkit.getPlayer(targetName);
         if (target == null) {
-            if (isPlayer) {
-                audience.sendMessage(mm.deserialize(ChatColor.stripColor(Files.Config.GLOBAL_PLAYER_NOT_FOUND)));
-                return true;
-            }
-            sender.sendMessage(rc(mm.stripTags(Files.Config.GLOBAL_PLAYER_NOT_FOUND)));
+            audience.sendMessage(Files.message("global-messages.player-not-found", Files.Config.GLOBAL_PLAYER_NOT_FOUND));
             return true;
         }
 
+        String operation;
         int amount;
-        try { amount = Integer.parseInt(args[2]);
+        try {
+            operation = StringArgumentType.word().parse(reader);
+            amount = Integer.parseInt(StringArgumentType.word().parse(reader));
         } catch (Exception e) {
-            if (isPlayer) {
-                audience.sendMessage(mm.deserialize(ChatColor.stripColor(Files.Config.AREPUTATION_CMD_USAGE.replace("%label%", label))));
-                return true;
-            }
-            sender.sendMessage(rc(mm.stripTags(Files.Config.AREPUTATION_CMD_USAGE.replace("%label%", label))));
+            audience.sendMessage(Files.message("commands.areputation.usage", Files.Config.AREPUTATION_CMD_USAGE,
+                    Placeholder.parsed("label", label)));
             return true;
         }
 
-        switch (args[1].toLowerCase()) {
+        switch (operation.toLowerCase()) {
             case "take": {
                 database.setPlayerReputation(target, database.getPlayerReputation(target) - amount);
-                if (isPlayer) {
-                    audience.sendMessage(mm.deserialize(ChatColor.stripColor(Files.Config.AREPUTATION_CMD_TAKE.replace("%player%", target.getName()).replace("%amount%", String.format("%d", amount)))));
-                    return true;
-                }
-                sender.sendMessage(rc(mm.stripTags(Files.Config.AREPUTATION_CMD_TAKE.replace("%player%", target.getName()).replace("%amount%", String.format("%d", amount)))));
+                audience.sendMessage(Files.message("commands.areputation.take", Files.Config.AREPUTATION_CMD_TAKE,
+                        Placeholder.parsed("player", target.getName()),
+                        Placeholder.parsed("amount", String.valueOf(amount))));
                 return true;
             }
             case "give": {
                 database.setPlayerReputation(target, database.getPlayerReputation(target) + amount);
-                if (isPlayer) {
-                    audience.sendMessage(mm.deserialize(ChatColor.stripColor(Files.Config.AREPUTATION_CMD_GIVE.replace("%player%", target.getName()).replace("%amount%", String.format("%d", amount)))));
-                    return true;
-                }
-                sender.sendMessage(rc(mm.stripTags(Files.Config.AREPUTATION_CMD_GIVE.replace("%player%", target.getName()).replace("%amount%", String.format("%d", amount)))));
+                audience.sendMessage(Files.message("commands.areputation.give", Files.Config.AREPUTATION_CMD_GIVE,
+                        Placeholder.parsed("player", target.getName()),
+                        Placeholder.parsed("amount", String.valueOf(amount))));
                 return true;
             }
             case "set": {
                 database.setPlayerReputation(target, amount);
-                if (isPlayer) {
-                    audience.sendMessage(mm.deserialize(ChatColor.stripColor(Files.Config.AREPUTATION_CMD_SET.replace("%player%", target.getName()).replace("%amount%", String.format("%d", amount)))));
-                    return true;
-                }
-                sender.sendMessage(rc(mm.stripTags(Files.Config.AREPUTATION_CMD_SET.replace("%player%", target.getName()).replace("%amount%", String.format("%d", amount)))));
+                audience.sendMessage(Files.message("commands.areputation.set", Files.Config.AREPUTATION_CMD_SET,
+                        Placeholder.parsed("player", target.getName()),
+                        Placeholder.parsed("amount", String.valueOf(amount))));
                 return true;
             }
             default: {
-                if (isPlayer) {
-                    audience.sendMessage(mm.deserialize(ChatColor.stripColor(Files.Config.AREPUTATION_CMD_USAGE.replace("%label%", label))));
-                    return true;
-                }
-                sender.sendMessage(rc(mm.stripTags(Files.Config.AREPUTATION_CMD_USAGE.replace("%label%", label))));
+                audience.sendMessage(Files.message("commands.areputation.usage", Files.Config.AREPUTATION_CMD_USAGE,
+                        Placeholder.parsed("label", label)));
                 return true;
             }
         }

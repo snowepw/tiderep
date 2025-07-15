@@ -2,6 +2,10 @@ package net.xdproston.tiderep;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.function.Function;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.configuration.file.YamlConfiguration;
 import net.xdproston.tiderep.logger.Logger;
 import net.xdproston.tiderep.logger.LoggerType;
@@ -24,50 +28,11 @@ public final class Files
             catch (Exception e) {
                 Logger.send(LoggerType.SEVERE, "An error occurred during the creation of the configuration file:" + String.format("%s - %s", e.getClass().getName(), e.getMessage()));
             }
+        }
 
-            try {config.load(file);}
-            catch (Exception e) {
-                Logger.send(LoggerType.SEVERE, "An error occurred while loading the configuration file:" + String.format("%s - %s", e.getClass().getName(), e.getMessage()));
-            }
-
-            config.set("settings.startup-reputation", 0);
-            config.set("settings.dislike-modificator", 1);
-            config.set("settings.like-modificator", 1);
-            config.set("settings.database.type", "sqlite");
-            config.set("settings.database.mysql-ip-and-port", "localhost:3306");
-            config.set("settings.database.mysql-user", "root");
-            config.set("settings.database.mysql-password", "123123");
-            config.set("settings.database.mysql-use-database", "mydb");
-
-            config.set("global-messages.no-perms", "<red>You dont have permission!");
-            config.set("global-messages.only-player", "&cOnly player!");
-            config.set("global-messages.player-not-found", "<red>Player not found!");
-            config.set("global-messages.self-use", "<red>You can't use it on yourself.");
-
-            config.set("commands.reputation.usage", "<white>Usage <grey>- <gold>/%label% <player name> <+/->");
-            config.set("commands.reputation.already", "<white>You've already thrown him a reputation.");
-            config.set("commands.reputation.message.to-sender-up", "<white>You have successfully increased the reputation of the player <gold>%player%<white>.");
-            config.set("commands.reputation.message.to-sender-down", "<white>You have successfully lowered the reputation of the player <gold>%player%<white>.");
-            config.set("commands.reputation.message.to-recipient-up", "<white>The <gold>%player% <white>player has boosted your reputation.");
-            config.set("commands.reputation.message.to-recipient-down", "<white>The <gold>%player% <white>player has lowered your reputation.");
-
-            config.set("commands.areputation.usage", "&f<white>Usage &7<gray>- &6<gold>/%label% <player name> <take/give/set> <amount>");
-            config.set("commands.areputation.take", "&f<white>You have &c<red>removed &f<white>a reputation to the player &6<gold>%player% &f<white>in the amount of &6<gold>%amount%&f<white>.");
-            config.set("commands.areputation.give", "&f<white>You have &a<green>added &f<white>a reputation to the player &6<gold>%player% &f<white>in the amount of &6<gold>%amount%&f<white>.");
-            config.set("commands.areputation.set", "&f<white>You have &e<yellow>set &f<white>a reputation to the player &6<gold>%player% &f<white>in the amount of &6<gold>%amount%&f<white>.");
-
-            config.set("commands.reputationreload.usage", "&f<white>usage&7<grey>: &6<gold>/reputationreload");
-            config.set("commands.reputationreload.reloaded", "&f<white>Plugin successfully reloaded!");
-
-            try {config.save(file);}
-            catch (Exception e) {
-                Logger.send(LoggerType.SEVERE, "An error occurred while loading the configuration file:" + String.format("%s - %s", e.getClass().getName(), e.getMessage()));
-            }
-        } else {
-            try {config.load(file);}
-            catch (Exception e) {
-                Logger.send(LoggerType.SEVERE, "An error occurred while loading the configuration file:" + String.format("%s - %s", e.getClass().getName(), e.getMessage()));
-            }
+        try {config.load(file);}
+        catch (Exception e) {
+            Logger.send(LoggerType.SEVERE, "An error occurred while loading the configuration file:" + String.format("%s - %s", e.getClass().getName(), e.getMessage()));
         }
     }
 
@@ -103,6 +68,17 @@ public final class Files
         }
     }
 
+    private static final MiniMessage MM = MiniMessage.miniMessage();
+
+    public static java.util.function.Function<TagResolver[], Component> messageFunction(String path, String def) {
+        String raw = config.getString(path, def);
+        return resolvers -> MM.deserialize(raw, resolvers);
+    }
+
+    public static Component message(String path, String def, TagResolver... resolvers) {
+        return messageFunction(path, def).apply(resolvers);
+    }
+
     public static final class Config
     {
         public static int STARTUP_REPUTATION;
@@ -123,30 +99,30 @@ public final class Files
                 Logger.send(LoggerType.SEVERE, "An error occurred while loading the configuration file:" + String.format("%s - %s", e.getClass().getName(), e.getMessage()));
             }
 
-            STARTUP_REPUTATION = config.getInt("settings.startup-reputation");
-            DISLIKE_MODIFICATOR = config.getInt("settings.dislike-modificator");
-            LIKE_MODIFICATOR = config.getInt("settings.like-modificator");
-            DATABASE_TYPE = config.getString("settings.database.type");
-            DATABASE_MYSQL_IP_AND_PORT = config.getString("settings.database.mysql-ip-and-port");
-            DATABASE_MYSQL_USER = config.getString("settings.database.mysql-user");
-            DATABASE_MYSQL_PASSWORD = config.getString("settings.database.mysql-password");
-            DATABASE_MYSQL_USE_DB = config.getString("settings.database.mysql-use-database");
-            GLOBAL_NO_PERMISSION = config.getString("global-messages.no-perms");
-            GLOBAL_USE_SELF = config.getString("global-messages.self-use");
-            GLOBAL_ONLY_PLAYER = config.getString("global-messages.only-player");
-            GLOBAL_PLAYER_NOT_FOUND = config.getString("global-messages.player-not-found");
-            REPUTATION_CMD_USAGE = config.getString("commands.reputation.usage");
-            REPUTATION_CMD_ALREADY = config.getString("commands.reputation.already");
-            REPUTATION_CMD_TO_SENDER_UP = config.getString("commands.reputation.message.to-sender-up");
-            REPUTATION_CMD_TO_SENDER_DOWN = config.getString("commands.reputation.message.to-sender-down");
-            REPUTATION_CMD_TO_RECIPIENT_UP = config.getString("commands.reputation.message.to-recipient-up");
-            REPUTATION_CMD_TO_RECIPIENT_DOWN = config.getString("commands.reputation.message.to-recipient-down");
-            AREPUTATION_CMD_USAGE = config.getString("commands.areputation.usage");
-            AREPUTATION_CMD_TAKE = config.getString("commands.areputation.take");
-            AREPUTATION_CMD_GIVE = config.getString("commands.areputation.give");
-            AREPUTATION_CMD_SET = config.getString("commands.areputation.set");
-            REPUTATIONRELOAD_CMD_RELOADED = config.getString("commands.reputationreload.reloaded");
-            REPUTATIONRELOAD_CMD_USAGE = config.getString("commands.reputationreload.usage");
+            STARTUP_REPUTATION = config.getInt("settings.startup-reputation", 0);
+            DISLIKE_MODIFICATOR = config.getInt("settings.dislike-modificator", 1);
+            LIKE_MODIFICATOR = config.getInt("settings.like-modificator", 1);
+            DATABASE_TYPE = config.getString("settings.database.type", "sqlite");
+            DATABASE_MYSQL_IP_AND_PORT = config.getString("settings.database.mysql-ip-and-port", "localhost:3306");
+            DATABASE_MYSQL_USER = config.getString("settings.database.mysql-user", "root");
+            DATABASE_MYSQL_PASSWORD = config.getString("settings.database.mysql-password", "123123");
+            DATABASE_MYSQL_USE_DB = config.getString("settings.database.mysql-use-database", "mydb");
+            GLOBAL_NO_PERMISSION = config.getString("global-messages.no-perms", "<red>You dont have permission!");
+            GLOBAL_USE_SELF = config.getString("global-messages.self-use", "<red>You can't use it on yourself.");
+            GLOBAL_ONLY_PLAYER = config.getString("global-messages.only-player", "&cOnly player!");
+            GLOBAL_PLAYER_NOT_FOUND = config.getString("global-messages.player-not-found", "<red>Player not found!");
+            REPUTATION_CMD_USAGE = config.getString("commands.reputation.usage", "<white>Usage <grey>- <gold>/%label% <player name> <+/->");
+            REPUTATION_CMD_ALREADY = config.getString("commands.reputation.already", "<white>You've already thrown him a reputation.");
+            REPUTATION_CMD_TO_SENDER_UP = config.getString("commands.reputation.message.to-sender-up", "<white>You have successfully increased the reputation of the player <gold>%player%<white>.");
+            REPUTATION_CMD_TO_SENDER_DOWN = config.getString("commands.reputation.message.to-sender-down", "<white>You have successfully lowered the reputation of the player <gold>%player%<white>.");
+            REPUTATION_CMD_TO_RECIPIENT_UP = config.getString("commands.reputation.message.to-recipient-up", "<white>The <gold>%player% <white>player has boosted your reputation.");
+            REPUTATION_CMD_TO_RECIPIENT_DOWN = config.getString("commands.reputation.message.to-recipient-down", "<white>The <gold>%player% <white>player has lowered your reputation.");
+            AREPUTATION_CMD_USAGE = config.getString("commands.areputation.usage", "<white>Usage <gray>- <gold>/%label% <player name> <take/give/set> <amount>");
+            AREPUTATION_CMD_TAKE = config.getString("commands.areputation.take", "<white>You have <red>removed <white>a reputation to the player <gold>%player% <white>in the amount of <gold>%amount%<white>.");
+            AREPUTATION_CMD_GIVE = config.getString("commands.areputation.give", "<white>You have <green>added <white>a reputation to the player <gold>%player% <white>in the amount of <gold>%amount%<white>.");
+            AREPUTATION_CMD_SET = config.getString("commands.areputation.set", "<white>You have <yellow>set <white>a reputation to the player <gold>%player% <white>in the amount of <gold>%amount%<white>.");
+            REPUTATIONRELOAD_CMD_RELOADED = config.getString("commands.reputationreload.reloaded", "<white>Plugin successfully reloaded!");
+            REPUTATIONRELOAD_CMD_USAGE = config.getString("commands.reputationreload.usage", "<white>usage: <gold>/reputationreload");
         }
     }
 }
