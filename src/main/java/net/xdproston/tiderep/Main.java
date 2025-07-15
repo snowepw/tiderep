@@ -5,7 +5,8 @@ import net.xdproston.tiderep.impl.MySQL;
 import net.xdproston.tiderep.impl.SQLite;
 import net.xdproston.tiderep.interfaces.Database;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Player;
@@ -37,11 +38,11 @@ public final class Main extends JavaPlugin implements Listener
     @Override
     public void onLoad() {
         ConsoleCommandSender ccs = Bukkit.getConsoleSender();
-
-        ccs.sendMessage(" ");
-        ccs.sendMessage(ChatColor.translateAlternateColorCodes('&', "  &6&lTideReputation &7- &f" + getDescription().getVersion()));
-        ccs.sendMessage(ChatColor.translateAlternateColorCodes('&', "  &fThe plugin is loading..."));
-        ccs.sendMessage(" ");
+        MiniMessage mm = MiniMessage.miniMessage();
+        ccs.sendMessage(Component.empty());
+        ccs.sendMessage(mm.deserialize("<gold><b>TideReputation</b></gold> <gray>-</gray> <white>" + getDescription().getVersion()));
+        ccs.sendMessage(mm.deserialize("<white>The plugin is loading...</white>"));
+        ccs.sendMessage(Component.empty());
     }
 
     private static void initCommands() {

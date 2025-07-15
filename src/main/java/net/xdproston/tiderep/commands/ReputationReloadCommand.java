@@ -4,7 +4,6 @@ import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.xdproston.tiderep.Files;
 import net.xdproston.tiderep.Main;
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -19,34 +18,17 @@ public class ReputationReloadCommand implements CommandExecutor, TabCompleter
 {
     private static final MiniMessage mm = MiniMessage.miniMessage();
 
-    private static @NotNull String rc(String target) {
-        return ChatColor.translateAlternateColorCodes('&', target);
-    }
-
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        boolean isPlayer = sender instanceof Player;
-        Audience audience = null;
-
-        if (isPlayer) audience = (Audience)sender;
+        Audience audience = (Audience) sender;
 
         if (args.length == 0) {
             Main.reload();
-            if (isPlayer) {
-                audience.sendMessage(mm.deserialize(ChatColor.stripColor(Files.Config.REPUTATIONRELOAD_CMD_RELOADED)));
-                return true;
-            }
-
-            sender.sendMessage(rc(mm.stripTags(Files.Config.REPUTATIONRELOAD_CMD_RELOADED)));
+            audience.sendMessage(mm.deserialize(Files.Config.REPUTATIONRELOAD_CMD_RELOADED));
             return true;
         }
 
-        if (isPlayer) {
-            audience.sendMessage(mm.deserialize(ChatColor.stripColor(Files.Config.REPUTATIONRELOAD_CMD_USAGE)));
-            return true;
-        }
-
-        sender.sendMessage(rc(mm.stripTags(Files.Config.REPUTATIONRELOAD_CMD_USAGE)));
+        audience.sendMessage(mm.deserialize(Files.Config.REPUTATIONRELOAD_CMD_USAGE));
         return true;
     }
 
